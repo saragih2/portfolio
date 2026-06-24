@@ -12,6 +12,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- Google Identity Services (untuk tombol Sign in with Google) -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
   :root {
     --bg: #070b12; --bg-2: #0c1320; --bg-card: #111a2b; --line: #1f2c44;
@@ -444,6 +446,17 @@ document.getElementById("forgot").addEventListener("click", (e) => {
   showErr("Hubungi pemilik portofolio untuk akses.");
 });
 
+/* ---- Supabase logging ---- */
+const _sb = supabase.createClient(
+  "https://whmgibfyrbhfleasstho.supabase.co",
+  "sb_publishable_idWV2GBljc8ieek7uslVKQ_J9HWZcO3"
+);
+async function logLogin(email, nama, foto) {
+  try {
+    await _sb.from("login_logs").insert({ email, nama, foto });
+  } catch (_) {}
+}
+
 /* ---- Google Sign-In ---- */
 function decodeJwt(token) {
   try {
@@ -465,7 +478,10 @@ function handleGoogle(response) {
     showErr("Akun Google ini tidak diizinkan masuk.");
     return;
   }
-  if (info && info.email) localStorage.setItem("cf_user", info.email);
+  if (info && info.email) {
+    localStorage.setItem("cf_user", info.email);
+    logLogin(info.email, info.name || "", info.picture || "");
+  }
   enter(document.getElementById("remember").checked);
 }
 
