@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masuk — Christian Febri Frayoga Saragih</title>
+<meta name="description" content="Gerbang masuk portofolio Christian Febri Frayoga Saragih.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2322d3ee'/><text x='16' y='22' text-anchor='middle' font-size='16' font-family='system-ui' fill='%23070b12' font-weight='700'>CF</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Google Identity Services (untuk tombol Sign in with Google) -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+  :root {
+    --bg: #070b12; --bg-2: #0c1320; --bg-card: #111a2b; --line: #1f2c44;
+    --text: #e6edf7; --text-dim: #9bb0cc; --text-mute: #6b7e9c;
+    --accent: #22d3ee; --accent-2: #4f8cff; --accent-3: #a855f7;
+    --glow: rgba(34,211,238,.35);
+    --font: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: var(--font); background: var(--bg); color: var(--text);
+    -webkit-font-smoothing: antialiased; overflow: hidden;
+  }
+  .stage { animation: pageIn .7s ease both; }
+  @keyframes pageIn { from { opacity: 0; } to { opacity: 1; } }
+  /* fail-visible: jika animasi tak berjalan, paksa tampil */
+  html.anim-fallback .stage,
+  html.anim-fallback .card,
+  html.anim-fallback .card > * { opacity: 1 !important; transform: none !important; }
+
+  .stage { display: grid; grid-template-columns: 1.05fr .95fr; height: 100vh; }
+
+  /* ============ LEFT — branding + HUD ============ */
+  .brand-side {
+    position: relative; overflow: hidden; padding: 56px 60px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    background: linear-gradient(155deg, #0a1120, #0c1626 55%, #0a101c);
+    border-right: 1px solid var(--line);
+  }
+  /* animated neon grid */
+  .brand-side::before {
+    content: ""; position: absolute; inset: -2px;
+    background-image:
+      linear-gradient(rgba(34,211,238,.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34,211,238,.07) 1px, transparent 1px);
+    background-size: 46px 46px;
+    mask-image: radial-gradient(120% 90% at 25% 35%, #000 35%, transparent 78%);
+    animation: gridFloat 18s linear infinite;
+  }
+  @keyframes gridFloat { to { background-position: 46px 46px; } }
+  /* parallax layers shift with cursor */
+  .brand-side::before { transform: translate(var(--gx, 0px), var(--gy, 0px)); transition: transform .25s ease-out; }
+  /* moving scanline */
+  .scan { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+  .scan::before { content: ""; position: absolute; left: 0; right: 0; height: 140px; background: linear-gradient(180deg, transparent, rgba(34,211,238,.06), transparent); animation: scanMove 7s linear infinite; }
+  @keyframes scanMove { 0% { top: -160px; } 100% { top: 100%; } }
+  /* glow orbs */
+  .brand-side::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(420px 320px at 18% 28%, rgba(34,211,238,.16), transparent 60%),
+      radial-gradient(460px 360px at 80% 80%, rgba(168,85,247,.14), transparent 62%);
+    transform: translate(var(--gx2, 0px), var(--gy2, 0px)); transition: transform .35s ease-out;
+  }
+  .bs-inner { position: relative; z-index: 2; }
+
+  .logo-row { display: flex; align-items: center; gap: 12px; }
+  .logo-badge {
+    width: 42px; height: 42px; border-radius: 12px; flex: none;
+    background: linear-gradient(140deg, var(--accent), var(--accent-2));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: #04222b; font-size: 1.1rem;
+    box-shadow: 0 0 26px -4px var(--glow);
+  }
+  .logo-row .lt { font-family: var(--mono); font-size: .9rem; letter-spacing: .5px; color: var(--text-dim); }
+  .logo-row .lt b { color: var(--text); }
+
+  .hero-block { position: relative; z-index: 2; }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 9px; font-family: var(--mono);
+    font-size: .72rem; letter-spacing: .6px; color: var(--accent);
+    border: 1px solid rgba(34,211,238,.3); border-radius: 999px; padding: 6px 13px;
+    background: rgba(34,211,238,.06); margin-bottom: 26px;
+  }
+  .status-pill .blip { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: blip 1.6s ease-in-out infinite; }
+  @keyframes blip { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+
+  .brand-side h1 { font-size: clamp(2rem, 3.4vw, 3rem); line-height: 1.08; letter-spacing: -1px; font-weight: 700; }
+  .brand-side h1 .grad { background: linear-gradient(110deg, var(--accent), var(--accent-2) 55%, var(--accent-3)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+
+  /* terminal */
+  .terminal {
+    margin-top: 30px; max-width: 460px; background: rgba(6,10,18,.72);
+    border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+    backdrop-filter: blur(4px); font-family: var(--mono); font-size: .82rem;
+  }
+  .term-bar { display: flex; align-items: center; gap: 7px; padding: 10px 14px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.02); }
+  .term-bar i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+  .term-bar i:nth-child(1) { background: #ff5f57; } .term-bar i:nth-child(2) { background: #febc2e; } .term-bar i:nth-child(3) { background: #28c840; }
+  .term-bar span { margin-left: 8px; color: var(--text-mute); font-size: .72rem; }
+  .term-body { padding: 16px 16px 18px; line-height: 1.85; color: var(--text-dim); min-height: 96px; }
+  .term-body .pr { color: var(--accent); }
+  .term-body .ok { color: #28c840; }
+  .caret { display: inline-block; width: 8px; background: var(--accent); margin-left: 2px; animation: blink 1.05s step-end infinite; color: transparent; }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+  .bs-foot { position: relative; z-index: 2; font-family: var(--mono); font-size: .72rem; color: var(--text-mute); display: flex; gap: 20px; flex-wrap: wrap; }
+  .bs-foot span { display: inline-flex; align-items: center; gap: 7px; }
+  .bs-foot svg { width: 14px; height: 14px; stroke: var(--accent); fill: none; stroke-width: 1.7; }
+
+  /* ============ RIGHT — glass login card ============ */
+  .form-side { position: relative; display: flex; align-items: center; justify-content: center; padding: 40px; background: var(--bg); overflow-y: auto; }
+  .form-side::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(600px 500px at 70% 30%, rgba(79,140,255,.10), transparent 60%);
+  }
+  .card {
+    position: relative; z-index: 2; width: 100%; max-width: 396px;
+    background: linear-gradient(160deg, rgba(22,34,58,.66), rgba(13,19,32,.72));
+    border: 1px solid rgba(120,150,200,.18); border-radius: 20px;
+    padding: 38px 34px 34px; backdrop-filter: blur(16px);
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.05);
+    animation: cardUp .8s cubic-bezier(.22,.61,.36,1) .15s both;
+  }
+  @keyframes cardUp { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+  /* staggered entrance of card contents */
+  .card > * { opacity: 0; animation: itemUp .6s cubic-bezier(.22,.61,.36,1) forwards; }
+  .card > *:nth-child(1) { animation-delay: .38s; }
+  .card > *:nth-child(2) { animation-delay: .46s; }
+  .card > *:nth-child(3) { animation-delay: .54s; }
+  .card > *:nth-child(4) { animation-delay: .62s; }
+  .card > *:nth-child(5) { animation-delay: .70s; }
+  .card > *:nth-child(6) { animation-delay: .78s; }
+  .card > *:nth-child(7) { animation-delay: .86s; }
+  @keyframes itemUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  /* button loading state */
+  .btn-primary.loading { pointer-events: none; }
+  .spinner { width: 17px; height: 17px; border: 2px solid rgba(4,34,43,.35); border-top-color: #04222b; border-radius: 50%; animation: spin .7s linear infinite; display: none; }
+  .btn-primary.loading .spinner { display: inline-block; }
+  .btn-primary.loading .bp-arrow { display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* caps-lock warning */
+  .caps { display: none; align-items: center; gap: 7px; margin-top: 8px; font-family: var(--mono); font-size: .72rem; color: #febc2e; }
+  .caps.show { display: flex; }
+  .caps svg { width: 13px; height: 13px; stroke: #febc2e; fill: none; stroke-width: 1.8; }
+
+  .card h2 { font-size: 1.5rem; letter-spacing: -.4px; }
+  .card .sub { color: var(--text-dim); font-size: .9rem; margin-top: 6px; margin-bottom: 26px; }
+
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-family: var(--mono); font-size: .72rem; letter-spacing: .6px; text-transform: uppercase; color: var(--text-mute); margin-bottom: 8px; }
+  .input-wrap { position: relative; display: flex; align-items: center; }
+  .input-wrap svg { position: absolute; left: 14px; width: 17px; height: 17px; stroke: var(--text-mute); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; transition: stroke .2s; }
+  .input-wrap input {
+    width: 100%; font-family: var(--font); font-size: .95rem; color: var(--text);
+    background: rgba(7,11,18,.6); border: 1px solid var(--line); border-radius: 11px;
+    padding: 13px 14px 13px 42px; outline: none; transition: border-color .2s, box-shadow .2s;
+  }
+  .input-wrap input::placeholder { color: var(--text-mute); }
+  .input-wrap input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(34,211,238,.12); }
+  .input-wrap input:focus + .eye, .input-wrap:focus-within svg { stroke: var(--accent); }
+  .eye { position: absolute; right: 8px; left: auto !important; background: none; border: 0; padding: 8px; cursor: pointer; }
+  .eye svg { position: static; }
+
+  .row { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 22px; }
+  .remember { display: flex; align-items: center; gap: 8px; font-size: .82rem; color: var(--text-dim); cursor: pointer; user-select: none; }
+  .remember input { accent-color: var(--accent); width: 15px; height: 15px; }
+  .row a { font-size: .82rem; color: var(--accent); text-decoration: none; }
+  .row a:hover { text-decoration: underline; }
+
+  .btn-primary {
+    width: 100%; border: 0; cursor: pointer; font-family: var(--font); font-weight: 600; font-size: .96rem;
+    color: #04222b; padding: 14px; border-radius: 11px;
+    background: linear-gradient(110deg, var(--accent), var(--accent-2));
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 34px -10px rgba(34,211,238,.55); }
+  .btn-primary svg { width: 17px; height: 17px; stroke: #04222b; fill: none; stroke-width: 2.2; }
+
+  .divider { display: flex; align-items: center; gap: 14px; margin: 22px 0; color: var(--text-mute); font-size: .76rem; font-family: var(--mono); }
+  .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+  /* Google button */
+  .gbtn {
+    width: 100%; cursor: pointer; font-family: var(--font); font-weight: 500; font-size: .92rem;
+    color: var(--text); padding: 12px; border-radius: 11px; border: 1px solid var(--line);
+    background: rgba(255,255,255,.03); display: flex; align-items: center; justify-content: center; gap: 11px;
+    transition: border-color .2s, background .2s;
+  }
+  .gbtn:hover { border-color: rgba(120,150,200,.4); background: rgba(255,255,255,.06); }
+  .gbtn svg { width: 18px; height: 18px; }
+  #gsi-real { display: flex; justify-content: center; margin-top: 6px; }
+
+  .err { color: #ff6b6b; font-size: .82rem; min-height: 18px; margin-top: 12px; text-align: center; font-family: var(--mono); opacity: 0; transition: opacity .2s; }
+  .err.show { opacity: 1; }
+  .hint { margin-top: 18px; text-align: center; font-size: .76rem; color: var(--text-mute); font-family: var(--mono); }
+  .hint code { color: var(--accent); }
+
+  /* success transition overlay */
+  .flash { position: fixed; inset: 0; z-index: 50; background: var(--bg); opacity: 0; pointer-events: none; }
+  body.leaving { animation: leaveZoom .7s ease forwards; }
+  @keyframes leaveZoom { to { opacity: 0; transform: scale(1.06); filter: blur(6px); } }
+  html.anim-fallback .form-side { overflow-y: auto; }
+
+  /* shake on error */
+  .card.shake { animation: shake .4s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-7px)} 40%,80%{transform:translateX(7px)} }
+
+  @media (max-width: 880px) {
+    .stage { grid-template-columns: 1fr; }
+    .brand-side { display: none; }
+    .form-side { background: linear-gradient(160deg, #0a1120, var(--bg)); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
+    body { opacity: 1; } .card, .card > * { opacity: 1; transform: none; }
+    .brand-side::before, .brand-side::after { transform: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="flash" id="flash"></div>
+
+<div class="stage">
+  <!-- LEFT -->
+  <section class="brand-side">
+    <div class="scan"></div>
+    <div class="bs-inner logo-row">
+      <div class="logo-badge">C</div>
+      <div class="lt"><b>Christian</b>.dev</div>
+    </div>
+
+    <div class="hero-block">
+      <div class="status-pill"><span class="blip"></span>ONLINE · OPEN FOR INTERNSHIP</div>
+      <h1>Selamat datang di<br><span class="grad">web portfolio saya.</span></h1>
+      <div class="terminal">
+        <div class="term-bar"><i></i><i></i><i></i><span>christian@portfolio: ~</span></div>
+        <div class="term-body" id="term"></div>
+      </div>
+    </div>
+
+    <div class="bs-foot">
+      <span><svg viewBox="0 0 24 24"><polyline points="8 7 3 12 8 17"></polyline><polyline points="16 7 21 12 16 17"></polyline></svg>Web Developer</span>
+      <span><svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2"></rect><line x1="10" y1="3" x2="10" y2="7"></line><line x1="14" y1="3" x2="14" y2="7"></line><line x1="10" y1="17" x2="10" y2="21"></line><line x1="3" y1="10" x2="7" y2="10"></line></svg>IoT Enthusiast</span>
+      <span><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"></ellipse><path d="M4 6 v12 c0 1.66 3.58 3 8 3 s8-1.34 8-3 V6"></path></svg>Backend</span>
+    </div>
+  </section>
+
+  <!-- RIGHT -->
+  <section class="form-side">
+    <div class="card" id="card">
+      <h2>Masuk</h2>
+      <p class="sub">Verifikasi dulu dong, lalu kita mulai.</p>
+
+      <form id="loginForm" autocomplete="off" novalidate>
+        <div class="field">
+          <label for="user">Username</label>
+          <div class="input-wrap">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 20 a8 8 0 0 1 16 0"></path></svg>
+            <input type="text" id="user" name="user" placeholder="username" autocomplete="username">
+          </div>
+        </div>
+        <div class="field">
+          <label for="pass">Password</label>
+          <div class="input-wrap">
+            <svg viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="9" rx="2"></rect><path d="M8 11 V7 a4 4 0 0 1 8 0 v4"></path></svg>
+            <input type="password" id="pass" name="pass" placeholder="••••••••" autocomplete="current-password">
+            <button type="button" class="eye" id="eye" aria-label="Lihat password">
+              <svg viewBox="0 0 24 24"><path d="M2 12 s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+          <div class="caps" id="caps"><svg viewBox="0 0 24 24"><path d="M12 4 5 11 h4 v5 h6 v-5 h4 z"></path><line x1="9" y1="20" x2="15" y2="20"></line></svg>Caps Lock aktif</div>
+        </div>
+
+        <div class="row">
+          <label class="remember"><input type="checkbox" id="remember" checked>Ingat saya</label>
+          <a href="#" id="forgot">Lupa password?</a>
+        </div>
+
+        <button type="submit" class="btn-primary" id="submitBtn">
+          <span class="bp-label">Masuk</span>
+          <svg class="bp-arrow" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          <span class="spinner"></span>
+        </button>
+
+        <div class="err" id="err"></div>
+      </form>
+
+      <div class="divider">atau</div>
+
+      <!-- Tombol Google: fallback custom (mode demo) + slot resmi GIS -->
+      <button type="button" class="gbtn" id="gbtn">
+        <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.9a5 5 0 0 1-2.2 3.3v2.7h3.5c2-1.9 3.3-4.7 3.3-7.8z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.5-2.7c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2v2.8A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.7 14.1a6.6 6.6 0 0 1 0-4.2V7.1H2a11 11 0 0 0 0 9.8l3.7-2.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3 .6 4.2 1.7l3.1-3.1A11 11 0 0 0 2 7.1l3.7 2.8C6.6 7.4 9.1 5.4 12 5.4z"/></svg>
+        Lanjutkan dengan Google
+      </button>
+      <div id="gsi-real"></div>
+
+      <div class="hint">Demo: <code>christian</code> / <code>portfolio</code></div>
+    </div>
+  </section>
+</div>
+
+<script>
+/* =====================================================================
+   KONFIGURASI — ubah sesuai kebutuhanmu
+   ===================================================================== */
+const CONFIG = {
+  // Kredensial username/password (pengecekan sisi-browser; bukan keamanan kuat).
+  username: "christian",
+  password: "portfolio",
+  // Google Sign-In: tempel Client ID-mu setelah situs di-hosting di domain asli.
+  // Dapatkan di https://console.cloud.google.com → Credentials → OAuth Client ID (Web).
+  // Biarkan kosong ("") untuk pakai mode DEMO (tombol tetap bisa diklik untuk masuk).
+  googleClientId: "614264762300-2oi6ji4dvg8o3oj4evd918veifs5fv4e.apps.googleusercontent.com",
+  // Batasi siapa yang boleh masuk lewat Google. Kosongkan ([]) = semua akun Google boleh.
+  // Isi dengan email yang diizinkan, mis: ["christianfebrifrayogasaragih@gmail.com"]
+  allowedEmails: [],
+  redirect: "index.html",
+};
+
+const KEY = "cf_authed";
+const flash = document.getElementById("flash");
+
+/* ---- Fail-visible failsafe: jika animasi entrance tak berjalan (mis. tab di-background),
+        paksa semua elemen tampil setelah 1.8s sehingga halaman tak pernah blank ---- */
+setTimeout(() => document.documentElement.classList.add("anim-fallback"), 1800);
+
+/* ---- Terminal typing intro ---- */
+(function term(){
+  const el = document.getElementById("term");
+  if (!el) return;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const lines = [
+    { t: '<span class="pr">$</span> auth --init', d: 28 },
+    { t: '<span class="ok">✓</span> secure channel established', d: 14 },
+    { t: '<span class="pr">$</span> awaiting credentials<span class="caret">.</span>', d: 28 },
+  ];
+  if (reduce) { el.innerHTML = lines.map(l=>l.t).join("<br>"); return; }
+  let li = 0;
+  function typeLine() {
+    if (li >= lines.length) return;
+    const raw = lines[li].t;
+    // type as plain text but allow the html spans: we type char-by-char on a temp string
+    let i = 0; const tmp = document.createElement("div");
+    const div = document.createElement("div"); el.appendChild(div);
+    (function step(){
+      tmp.innerHTML = raw.slice(0, i);
+      div.innerHTML = tmp.innerHTML;
+      if (i++ <= raw.length) setTimeout(step, lines[li].d);
+      else { li++; setTimeout(typeLine, 260); }
+    })();
+  }
+  typeLine();
+})();
+
+/* ---- Cursor parallax on brand side ---- */
+(function parallax(){
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce) return;
+  const side = document.querySelector(".brand-side");
+  if (!side) return;
+  window.addEventListener("pointermove", (e) => {
+    const x = (e.clientX / window.innerWidth - 0.5);
+    const y = (e.clientY / window.innerHeight - 0.5);
+    side.style.setProperty("--gx", (x * 18).toFixed(1) + "px");
+    side.style.setProperty("--gy", (y * 18).toFixed(1) + "px");
+    side.style.setProperty("--gx2", (x * -28).toFixed(1) + "px");
+    side.style.setProperty("--gy2", (y * -28).toFixed(1) + "px");
+  }, { passive: true });
+})();
+
+/* ---- Caps Lock warning ---- */
+(function caps(){
+  const pass = document.getElementById("pass");
+  const warn = document.getElementById("caps");
+  const check = (e) => {
+    if (e.getModifierState && e.getModifierState("CapsLock")) warn.classList.add("show");
+    else warn.classList.remove("show");
+  };
+  pass.addEventListener("keydown", check);
+  pass.addEventListener("keyup", check);
+  pass.addEventListener("blur", () => warn.classList.remove("show"));
+})();
+
+/* ---- Already authed? skip straight in ---- */
+if (localStorage.getItem(KEY) === "1") {
+  location.replace(CONFIG.redirect);
+}
+
+/* ---- Show / hide password ---- */
+document.getElementById("eye").addEventListener("click", () => {
+  const p = document.getElementById("pass");
+  p.type = p.type === "password" ? "text" : "password";
+});
+
+/* ---- Success flow ---- */
+function enter(remember) {
+  if (remember) localStorage.setItem(KEY, "1");
+  else sessionStorage.setItem(KEY, "1");
+  const btn = document.getElementById("submitBtn");
+  const label = btn.querySelector(".bp-label");
+  btn.classList.add("loading");
+  if (label) label.textContent = "Mengautentikasi...";
+  setTimeout(() => {
+    document.body.classList.add("leaving");
+    setTimeout(() => location.href = CONFIG.redirect, 620);
+  }, 780);
+}
+
+/* ---- Error helper ---- */
+function showErr(msg) {
+  const e = document.getElementById("err");
+  const card = document.getElementById("card");
+  e.textContent = msg; e.classList.add("show");
+  card.classList.remove("shake"); void card.offsetWidth; card.classList.add("shake");
+}
+
+/* ---- Form submit (username/password) ---- */
+document.getElementById("loginForm").addEventListener("submit", (ev) => {
+  ev.preventDefault();
+  const u = document.getElementById("user").value.trim();
+  const p = document.getElementById("pass").value;
+  const remember = document.getElementById("remember").checked;
+  if (!u || !p) { showErr("Username & password wajib diisi."); return; }
+  if (u === CONFIG.username && p === CONFIG.password) {
+    enter(remember);
+  } else {
+    showErr("Username atau password salah.");
+  }
+});
+
+document.getElementById("forgot").addEventListener("click", (e) => {
+  e.preventDefault();
+  showErr("Hubungi pemilik portofolio untuk akses.");
+});
+
+/* ---- Google Sign-In ---- */
+function decodeJwt(token) {
+  try {
+    const p = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    return JSON.parse(decodeURIComponent(escape(atob(p))));
+  } catch (_) { return null; }
+}
+
+function handleGoogle(response) {
+  // Mode DEMO (tanpa Client ID): tidak ada credential → langsung masuk.
+  if (!response || !response.credential) {
+    enter(document.getElementById("remember").checked);
+    return;
+  }
+  // Mode ASLI: decode JWT untuk ambil email & nama.
+  const info = decodeJwt(response.credential);
+  const allow = CONFIG.allowedEmails || [];
+  if (allow.length && (!info || !allow.includes(info.email))) {
+    showErr("Akun Google ini tidak diizinkan masuk.");
+    return;
+  }
+  if (info && info.email) localStorage.setItem("cf_user", info.email);
+  enter(document.getElementById("remember").checked);
+}
+
+window.addEventListener("load", () => {
+  const real = document.getElementById("gsi-real");
+  const fallback = document.getElementById("gbtn");
+  if (CONFIG.googleClientId && window.google && google.accounts) {
+    // Mode ASLI: render tombol resmi Google, sembunyikan fallback
+    google.accounts.id.initialize({
+      client_id: CONFIG.googleClientId,
+      callback: handleGoogle,
+    });
+    google.accounts.id.renderButton(real, {
+      theme: "filled_black", size: "large", shape: "pill",
+      text: "continue_with", width: 328,
+    });
+    fallback.style.display = "none";
+  } else {
+    // Mode DEMO: tombol custom langsung memasukkan (alur bisa dilihat)
+    fallback.addEventListener("click", () => handleGoogle());
+  }
+});
+</script>
+</body>
+</html>

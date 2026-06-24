@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV — Christian Febri Frayoga Saragih</title>
+<meta name="description" content="Curriculum Vitae Christian Febri Frayoga Saragih — Mahasiswa Teknik Informatika, Web Developer & IoT Enthusiast.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2322d3ee'/><text x='16' y='22' text-anchor='middle' font-size='16' font-family='system-ui' fill='%23070b12' font-weight='700'>CF</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f1b2d;
+    --ink-2: #334155;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --line-soft: #eef2f7;
+    --accent: #0a7ea4;
+    --accent-deep: #075e7a;
+    --accent-soft: #e8f6fb;
+    --paper: #ffffff;
+    --font: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: var(--font);
+    background: #070b12;
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    padding: 40px 16px 80px;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1;
+    background:
+      radial-gradient(800px 460px at 15% -8%, rgba(34,211,238,.10), transparent 60%),
+      radial-gradient(700px 460px at 100% 0%, rgba(168,85,247,.08), transparent 55%);
+  }
+
+  /* Toolbar (screen only) */
+  .toolbar {
+    max-width: 210mm; margin: 0 auto 22px; display: flex; align-items: center;
+    justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .toolbar .who { color: #9bb0cc; font-family: var(--mono); font-size: .82rem; }
+  .toolbar .who b { color: #22d3ee; }
+  .tb-actions { display: flex; gap: 10px; }
+  .tb-btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 999px;
+    font-family: var(--font); font-weight: 600; font-size: .85rem; cursor: pointer; border: 1px solid #1f2c44;
+    color: #e6edf7; background: rgba(255,255,255,.04); transition: all .2s; text-decoration: none;
+  }
+  .tb-btn:hover { border-color: #22d3ee; color: #22d3ee; }
+  .tb-btn.primary { background: linear-gradient(110deg, #22d3ee, #4f8cff); color: #042029; border-color: transparent; }
+  .tb-btn.primary:hover { color: #042029; transform: translateY(-2px); box-shadow: 0 12px 30px -10px rgba(34,211,238,.5); }
+
+  /* Sheet (A4) */
+  .sheet {
+    width: 210mm; min-height: 297mm; margin: 0 auto; background: var(--paper);
+    padding: 16mm 15mm; box-shadow: 0 40px 90px -30px rgba(0,0,0,.7);
+    border-radius: 3px;
+  }
+
+  /* Header */
+  .cv-head { border-bottom: 2px solid var(--ink); padding-bottom: 16px; margin-bottom: 18px; }
+  .cv-name { font-size: 30px; font-weight: 700; letter-spacing: -.5px; line-height: 1.05; color: var(--ink); }
+  .cv-role { font-family: var(--mono); font-size: 11.5px; color: var(--accent); margin-top: 7px; letter-spacing: .3px; }
+  .cv-contact { display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 14px; }
+  .cv-contact a, .cv-contact span { display: inline-flex; align-items: center; gap: 7px; font-size: 11px; color: var(--ink-2); text-decoration: none; }
+  .cv-contact svg { width: 13px; height: 13px; fill: none; stroke: var(--accent); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+  /* Layout */
+  .cv-grid { display: grid; grid-template-columns: 1fr 1.9fr; gap: 26px; }
+  .col-side { border-right: 1px solid var(--line); padding-right: 24px; }
+
+  /* Section heading */
+  .sh { display: flex; align-items: center; gap: 9px; font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--accent-deep); margin-bottom: 12px; }
+  .sh::before { content: ""; width: 16px; height: 2px; background: var(--accent); border-radius: 2px; }
+  .block { margin-bottom: 22px; }
+  .block:last-child { margin-bottom: 0; }
+
+  /* Profile */
+  .profile { font-size: 12px; color: var(--ink-2); line-height: 1.6; text-align: justify; }
+
+  /* Entries */
+  .entry { margin-bottom: 14px; page-break-inside: avoid; }
+  .entry:last-child { margin-bottom: 0; }
+  .entry-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .entry-title { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .entry-date { font-family: var(--mono); font-size: 10px; color: var(--muted); white-space: nowrap; flex: none; }
+  .entry-sub { font-size: 11.5px; color: var(--accent-deep); font-weight: 500; margin-top: 1px; }
+  .entry ul { list-style: none; margin-top: 5px; display: grid; gap: 3px; }
+  .entry li { position: relative; padding-left: 15px; font-size: 11.5px; color: var(--ink-2); line-height: 1.45; }
+  .entry li::before { content: ""; position: absolute; left: 2px; top: 7px; width: 5px; height: 5px; border-radius: 50%; border: 1.4px solid var(--accent); }
+
+  /* Skills */
+  .skblock { margin-bottom: 13px; }
+  .skblock h4 { font-size: 11px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .chip { font-family: var(--mono); font-size: 9.5px; white-space: nowrap; padding: 3px 8px; border-radius: 5px; background: var(--line-soft); border: 1px solid var(--line); color: var(--ink-2); }
+  .chip.hot { background: var(--accent-soft); border-color: #bfe6f0; color: var(--accent-deep); font-weight: 500; }
+
+  /* Side simple list */
+  .slist { display: grid; gap: 7px; }
+  .slist .it { font-size: 11.5px; color: var(--ink-2); display: flex; align-items: flex-start; gap: 8px; }
+  .slist .it::before { content: ""; margin-top: 6px; width: 5px; height: 5px; flex: none; border-radius: 50%; background: var(--accent); }
+
+  /* Cert */
+  .cert { margin-bottom: 9px; }
+  .cert .t { font-size: 11.5px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+  .cert .y { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+
+  /* Education */
+  .edu .entry-sub { color: var(--ink-2); font-weight: 400; }
+
+  @media (max-width: 800px) {
+    .sheet { width: 100%; padding: 28px 22px; }
+    .cv-grid { grid-template-columns: 1fr; gap: 6px; }
+    .col-side { border-right: 0; padding-right: 0; border-bottom: 1px solid var(--line); padding-bottom: 18px; margin-bottom: 18px; }
+  }
+
+  @page { size: A4; margin: 13mm; }
+  @media print {
+    body { background: #fff; padding: 0; }
+    body::before { display: none; }
+    .no-print { display: none !important; }
+    .sheet { width: auto; min-height: auto; margin: 0; padding: 0; box-shadow: none; border-radius: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Toolbar (tidak ikut tercetak) -->
+<div class="toolbar no-print">
+  <div class="who">CV · <b>Christian Febri Frayoga Saragih</b></div>
+  <div class="tb-actions">
+    <a href="index.html" class="tb-btn">← Kembali ke portofolio</a>
+    <button class="tb-btn primary" onclick="window.print()">⤓ Unduh PDF</button>
+  </div>
+</div>
+
+<div class="sheet">
+
+  <!-- HEADER -->
+  <header class="cv-head">
+    <div class="cv-name">Christian Febri Frayoga Saragih</div>
+    <div class="cv-role">// Mahasiswa Teknik Informatika · Web Developer · IoT Enthusiast</div>
+    <div class="cv-contact">
+      <a href="mailto:christianfebrifrayogasaragih@gmail.com"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7 12 13 21 7"></path></svg>christianfebrifrayogasaragih@gmail.com</a>
+      <a href="https://wa.me/6285270456136"><svg viewBox="0 0 24 24"><path d="M5 4 h4 l2 5 -2.5 1.5 a11 11 0 0 0 5 5 L21 12 v4 a2 2 0 0 1-2 2 A16 16 0 0 1 3 6 a2 2 0 0 1 2-2z"></path></svg>+62 852-7045-6136</a>
+      <span><svg viewBox="0 0 24 24"><path d="M12 21 s7-6 7-11 a7 7 0 0 0-14 0 c0 5 7 11 7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Kiaracondong, Bandung</span>
+      <a href="https://github.com/christianfrayoga"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 16 v-2.2 a2 2 0 0 1 .6-1.6 c-2-.3-3.6-1-3.6-3.6 a2.8 2.8 0 0 1 .8-2 c-.1-.3-.3-1.1.1-2.2 0 0 .8-.2 2.6 1 a8.5 8.5 0 0 1 4 0 c1.8-1.2 2.6-1 2.6-1 .4 1.1.2 1.9.1 2.2 a2.8 2.8 0 0 1 .8 2 c0 2.6-1.6 3.3-3.6 3.6 a2.2 2.2 0 0 1 .6 1.7 V16"></path></svg>github.com/christianfrayoga</a>
+    </div>
+  </header>
+
+  <div class="cv-grid">
+
+    <!-- SIDEBAR -->
+    <aside class="col-side">
+      <section class="block">
+        <h2 class="sh">Kemampuan Teknis</h2>
+        <div class="skblock">
+          <h4>Bahasa Pemrograman</h4>
+          <div class="chips">
+            <span class="chip hot">PHP</span><span class="chip hot">MySQL</span>
+            <span class="chip">HTML</span><span class="chip">CSS</span>
+            <span class="chip">JavaScript</span><span class="chip">Python</span><span class="chip">Dart</span>
+          </div>
+        </div>
+        <div class="skblock">
+          <h4>Backend &amp; Framework</h4>
+          <div class="chips">
+            <span class="chip hot">Laravel</span><span class="chip">PHP Native</span>
+            <span class="chip">ReactJS</span><span class="chip">REST API</span>
+            <span class="chip">CRUD &amp; Auth</span><span class="chip">MVC</span>
+          </div>
+        </div>
+        <div class="skblock">
+          <h4>Database</h4>
+          <div class="chips">
+            <span class="chip hot">MySQL</span><span class="chip">MongoDB</span>
+            <span class="chip">Query &amp; JOIN</span><span class="chip">Relasi Tabel</span>
+          </div>
+        </div>
+        <div class="skblock">
+          <h4>Internet of Things (IoT)</h4>
+          <div class="chips">
+            <span class="chip hot">ESP32</span><span class="chip hot">Arduino Uno</span>
+            <span class="chip">Sensor</span><span class="chip">Relay</span>
+            <span class="chip">Servo</span><span class="chip">PIR</span>
+            <span class="chip">Embedded</span>
+          </div>
+        </div>
+        <div class="skblock">
+          <h4>Tools &amp; Teknologi</h4>
+          <div class="chips">
+            <span class="chip">Git &amp; GitHub</span><span class="chip">VS Code</span>
+            <span class="chip">Postman</span><span class="chip">Figma</span>
+            <span class="chip">Arduino IDE</span><span class="chip">XAMPP</span>
+            <span class="chip">MySQL Workbench</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <h2 class="sh">Soft Skills</h2>
+        <div class="slist">
+          <div class="it">Komunikatif &amp; mampu bekerja dalam tim</div>
+          <div class="it">Disiplin dan bertanggung jawab</div>
+          <div class="it">Cepat belajar dan adaptif</div>
+          <div class="it">Manajemen waktu &amp; administrasi</div>
+        </div>
+      </section>
+
+      <section class="block">
+        <h2 class="sh">Sertifikasi</h2>
+        <div class="cert">
+          <div class="t">ASEAN Data Science Explorers (ADSE)</div>
+          <div class="y">2024 · Skor 100,00</div>
+        </div>
+        <div class="cert">
+          <div class="t">Cisco CCNA 200-301: Network Fundamentals</div>
+          <div class="y">2025</div>
+        </div>
+      </section>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="col-main">
+      <section class="block">
+        <h2 class="sh">Profil Singkat</h2>
+        <p class="profile">Mahasiswa S1 Teknik Informatika Universitas Adhirajasa Reswara Sanjaya dengan IPK 3,8 yang memiliki minat pada Software Development, Backend Engineering, Database Management, dan Internet of Things (IoT). Berpengalaman mengembangkan aplikasi berbasis web menggunakan PHP, MySQL, HTML, CSS, dan JavaScript, serta membangun proyek embedded system menggunakan Arduino dan ESP32. Memiliki kemampuan analisis, problem solving, dan kolaborasi tim yang baik, serta antusias mempelajari teknologi baru untuk mendukung transformasi digital.</p>
+      </section>
+
+      <section class="block edu">
+        <h2 class="sh">Pendidikan</h2>
+        <div class="entry">
+          <div class="entry-top"><span class="entry-title">Universitas Adhirajasa Reswara Sanjaya</span><span class="entry-date">2023 – Sekarang</span></div>
+          <div class="entry-sub">S1 Teknik Informatika · Semester 6 · IPK 3.8 / 4.00</div>
+        </div>
+      </section>
+
+      <section class="block">
+        <h2 class="sh">Proyek Pribadi</h2>
+        <div class="entry">
+          <div class="entry-top"><span class="entry-title">Website UKM Kampus + Sistem Booking</span><span class="entry-date">2024</span></div>
+          <ul>
+            <li>Mengembangkan website UKM kampus berbasis PHP dan MySQL dengan fitur profil organisasi, dokumentasi kegiatan, dan sistem booking.</li>
+            <li>Bertanggung jawab pada pengolahan data pengguna dan logika backend; menerapkan Laravel untuk memahami konsep MVC.</li>
+          </ul>
+        </div>
+        <div class="entry">
+          <div class="entry-top"><span class="entry-title">To-Do List Web App (ReactJS)</span><span class="entry-date">2025</span></div>
+          <ul>
+            <li>Aplikasi web pencatatan dan pengelolaan tugas harian dengan komponen dinamis serta state management dasar.</li>
+            <li>Fokus pada interaktivitas dan antarmuka pengguna yang responsif.</li>
+          </ul>
+        </div>
+        <div class="entry">
+          <div class="entry-top"><span class="entry-title">Smart Saving Box IoT (ESP32)</span><span class="entry-date">2025</span></div>
+          <ul>
+            <li>Sistem tabungan pintar berbasis ESP32 yang mendeteksi transaksi penyimpanan uang secara otomatis dan menampilkan saldo real-time.</li>
+            <li>Menerapkan konsep Internet of Things dan embedded system.</li>
+          </ul>
+        </div>
+        <div class="entry">
+          <div class="entry-top"><span class="entry-title">Smart Home Prototype (Arduino)</span><span class="entry-date">2025</span></div>
+          <ul>
+            <li>Miniatur rumah pintar berbasis Arduino: kontrol lampu berbasis suara, pintu otomatis, alarm pendeteksi gerakan, dan monitoring suhu.</li>
+            <li>Mengintegrasikan berbagai sensor &amp; aktuator dalam satu sistem; melakukan pengujian perangkat keras dan pemrograman mikrokontroler.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="block">
+        <h2 class="sh">Pengalaman Organisasi &amp; Kepanitiaan</h2>
+        <div class="entry">
+          <div class="entry-top"><span class="entry-title">Ketua PMK Universitas</span><span class="entry-date">2025 – Sekarang</span></div>
+          <ul>
+            <li>Memimpin organisasi kemahasiswaan Kristen; mengkoordinasikan tim, program kerja, dan kegiatan rutin.</li>
+            <li>Bertanggung jawab terhadap pengambilan keputusan dan evaluasi kegiatan.</li>
+          </ul>
+        </div>
+        <div class="entry">
+          <div class="entry-top"><span class="entry-title">Wakil Sekretaris GKPS Bandung Timur</span><span class="entry-date">2025 – Sekarang</span></div>
+          <ul>
+            <li>Mengelola administrasi dan dokumentasi organisasi; menyusun surat, laporan kegiatan, dan arsip.</li>
+            <li>Berkoordinasi dengan pengurus dan jemaat dalam kegiatan gereja.</li>
+          </ul>
+        </div>
+        <div class="entry">
+          <div class="entry-top"><span class="entry-title">Ketua Pelaksana Natal Universitas</span><span class="entry-date">2024</span></div>
+          <ul>
+            <li>Bertanggung jawab atas perencanaan, koordinasi tim, dan evaluasi acara kampus berskala besar.</li>
+          </ul>
+        </div>
+        <div class="entry">
+          <div class="entry-top"><span class="entry-title">Divisi Media &amp; IT Kegiatan Kampus</span><span class="entry-date">2025</span></div>
+          <ul>
+            <li>Mengelola konten digital, desain publikasi, serta dokumentasi teknis acara.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="block">
+        <h2 class="sh">Tujuan Magang</h2>
+        <p class="profile">Melalui program magang, saya ingin mengembangkan keterampilan teknis dalam pengembangan web dan backend, memahami sistem berskala besar serta alur kerja industri, dan berkontribusi secara nyata dalam tim maupun proyek perusahaan.</p>
+      </section>
+    </main>
+
+  </div>
+</div>
+
+</body>
+</html>
