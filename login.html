@@ -516,7 +516,10 @@ document.getElementById("gbtn").addEventListener("click", async () => {
   localStorage.setItem("cf_oauth_pending", "1");
   const { error } = await _sb.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: window.location.origin + "/index.html" },
+    options: {
+      redirectTo: window.location.origin + "/index.html",
+      queryParams: { prompt: "select_account" },
+    },
   });
   if (error) { localStorage.removeItem("cf_oauth_pending"); showErr("Google Sign-In gagal: " + error.message); }
 });
