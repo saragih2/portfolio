@@ -268,13 +268,8 @@
   <!-- RIGHT -->
   <section class="form-side">
     <div class="card" id="card">
-      <div class="tabs">
-        <button type="button" class="tab active" id="tabMasuk">Masuk</button>
-        <button type="button" class="tab" id="tabDaftar">Daftar</button>
-      </div>
-
       <h2 id="formTitle">Masuk</h2>
-      <p class="sub" id="formSub">Verifikasi dulu dong, lalu kita mulai.</p>
+      <p class="sub" id="formSub">Akses khusus. Masuk dengan akun terdaftar.</p>
 
       <form id="loginForm" autocomplete="off" novalidate>
         <div class="field">
@@ -294,14 +289,6 @@
             </button>
           </div>
           <div class="caps" id="caps"><svg viewBox="0 0 24 24"><path d="M12 4 5 11 h4 v5 h6 v-5 h4 z"></path><line x1="9" y1="20" x2="15" y2="20"></line></svg>Caps Lock aktif</div>
-        </div>
-
-        <div class="field" id="confirmField" style="display:none">
-          <label for="confirm">Konfirmasi Password</label>
-          <div class="input-wrap">
-            <svg viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="9" rx="2"></rect><path d="M8 11 V7 a4 4 0 0 1 8 0 v4"></path></svg>
-            <input type="password" id="confirm" name="confirm" placeholder="••••••••" autocomplete="new-password">
-          </div>
         </div>
 
         <div class="row">
@@ -337,6 +324,13 @@ const _sb = supabase.createClient(
 
 /* ---- Failsafe animasi ---- */
 setTimeout(() => document.documentElement.classList.add("anim-fallback"), 1800);
+
+/* ---- Akun ditolak (akun tak terdaftar coba login Google) ---- */
+if (new URLSearchParams(location.search).get("denied") === "1") {
+  localStorage.removeItem("cf_oauth_pending");
+  setTimeout(() => showErr("Akun ini tidak terdaftar. Hubungi pemilik untuk minta akses."), 100);
+  history.replaceState(null, "", location.pathname);
+}
 
 /* ---- Sudah login? langsung masuk ---- */
 (async function () {
@@ -399,28 +393,6 @@ setTimeout(() => document.documentElement.classList.add("anim-fallback"), 1800);
   pass.addEventListener("blur", () => warn.classList.remove("show"));
 })();
 
-/* ---- Mode: masuk / daftar ---- */
-let mode = "masuk";
-
-function setMode(m) {
-  mode = m;
-  document.getElementById("tabMasuk").classList.toggle("active", m === "masuk");
-  document.getElementById("tabDaftar").classList.toggle("active", m === "daftar");
-  document.getElementById("formTitle").textContent = m === "masuk" ? "Masuk" : "Daftar";
-  document.getElementById("formSub").textContent = m === "masuk"
-    ? "Verifikasi dulu dong, lalu kita mulai."
-    : "Buat akun untuk mengakses portofolio.";
-  document.querySelector(".bp-label").textContent = m === "masuk" ? "Masuk" : "Buat Akun";
-  document.getElementById("confirmField").style.display = m === "daftar" ? "block" : "none";
-  const row = document.querySelector(".row");
-  if (row) row.style.display = m === "masuk" ? "flex" : "none";
-  document.getElementById("err").classList.remove("show");
-  document.getElementById("success").classList.remove("show");
-}
-
-document.getElementById("tabMasuk").addEventListener("click", () => setMode("masuk"));
-document.getElementById("tabDaftar").addEventListener("click", () => setMode("daftar"));
-
 /* ---- Show/hide password ---- */
 document.getElementById("eye").addEventListener("click", () => {
   const p = document.getElementById("pass");
@@ -457,36 +429,18 @@ function setLoading(on) {
   const btn = document.getElementById("submitBtn");
   btn.classList.toggle("loading", on);
   const label = btn.querySelector(".bp-label");
-  if (label) label.textContent = on
-    ? (mode === "masuk" ? "Mengautentikasi..." : "Membuat akun...")
-    : (mode === "masuk" ? "Masuk" : "Buat Akun");
+  if (label) label.textContent = on ? "Mengautentikasi..." : "Masuk";
 }
 
-/* ---- Form submit ---- */
+/* ---- Form submit (hanya masuk; pendaftaran publik dimatikan) ---- */
 document.getElementById("loginForm").addEventListener("submit", async (ev) => {
   ev.preventDefault();
   const email = document.getElementById("user").value.trim();
   const pass  = document.getElementById("pass").value;
   if (!email || !pass) { showErr("Email & password wajib diisi."); return; }
 
-  if (mode === "daftar") {
-    const confirm = document.getElementById("confirm").value;
-    if (pass !== confirm) { showErr("Password tidak cocok."); return; }
-    if (pass.length < 6)  { showErr("Password minimal 6 karakter."); return; }
-
-    setLoading(true);
-    const { data, error } = await _sb.auth.signUp({ email, password: pass });
-    setLoading(false);
-
-    if (error) { showErr(error.message); return; }
-    if (data.session) { await logLogin(email); enter(); return; }
-    showSuccess("Akun dibuat! Cek email kamu untuk konfirmasi, lalu masuk.");
-    setMode("masuk");
-    return;
-  }
-
   setLoading(true);
-  const { data, error } = await _sb.auth.signInWithPassword({ email, password: pass });
+  const { error } = await _sb.auth.signInWithPassword({ email, password: pass });
   setLoading(false);
 
   if (error) {

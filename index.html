@@ -6,6 +6,11 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
   (async function () {
+    // OAuth gagal/ditolak: Supabase redirect balik dengan param error → lempar ke login.
+    if ((location.hash + location.search).indexOf("error") !== -1) {
+      localStorage.removeItem("cf_oauth_pending");
+      location.replace("login.html?denied=1"); return;
+    }
     try {
       var _c = supabase.createClient(
         "https://whmgibfyrbhfleasstho.supabase.co",
