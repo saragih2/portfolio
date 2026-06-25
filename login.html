@@ -441,14 +441,25 @@ document.getElementById("loginForm").addEventListener("submit", async (ev) => {
 
   setLoading(true);
   const { error } = await _sb.auth.signInWithPassword({ email, password: pass });
-  setLoading(false);
 
   if (error) {
+    setLoading(false);
     showErr(error.message.includes("Email not confirmed")
       ? "Email belum dikonfirmasi. Cek inbox kamu."
       : "Email atau password salah.");
     return;
   }
+
+  // Allowlist: email harus terdaftar
+  const em = email.toLowerCase();
+  const al = await _sb.from("allowed_emails").select("email").eq("email", em).maybeSingle();
+  setLoading(false);
+  if (al.error || !al.data) {
+    await _sb.auth.signOut();
+    showErr("Email ini tidak terdaftar untuk akses.");
+    return;
+  }
+
   await logLogin(email);
   enter();
 });

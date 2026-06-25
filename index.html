@@ -18,6 +18,14 @@
       );
       var r = await _c.auth.getSession();
       if (!r.data.session) { location.replace("login.html"); return; }
+      // Allowlist: email harus terdaftar di tabel allowed_emails, kalau tidak -> tendang.
+      var _em = (r.data.session.user.email || "").toLowerCase();
+      var _al = await _c.from("allowed_emails").select("email").eq("email", _em).maybeSingle();
+      if (_al.error || !_al.data) {
+        await _c.auth.signOut();
+        localStorage.removeItem("cf_oauth_pending");
+        location.replace("login.html?denied=1"); return;
+      }
       // Log login Google: hanya sekali, saat baru kembali dari OAuth redirect.
       if (localStorage.getItem("cf_oauth_pending") === "1") {
         localStorage.removeItem("cf_oauth_pending");
