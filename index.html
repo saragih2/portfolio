@@ -13,6 +13,18 @@
       );
       var r = await _c.auth.getSession();
       if (!r.data.session) { location.replace("login.html"); return; }
+      // Log login Google: hanya sekali, saat baru kembali dari OAuth redirect.
+      if (localStorage.getItem("cf_oauth_pending") === "1") {
+        localStorage.removeItem("cf_oauth_pending");
+        var u = r.data.session.user, m = u.user_metadata || {};
+        try {
+          await _c.from("login_logs").insert({
+            email: u.email || "",
+            nama: m.full_name || m.name || "",
+            foto: m.avatar_url || m.picture || "",
+          });
+        } catch (_) {}
+      }
     } catch (e) {
       location.replace("login.html"); return;
     }

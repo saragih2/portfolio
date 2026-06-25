@@ -428,6 +428,12 @@ document.getElementById("eye").addEventListener("click", () => {
 });
 
 /* ---- Helpers ---- */
+async function logLogin(email, nama, foto) {
+  try {
+    await _sb.from("login_logs").insert({ email, nama: nama || "", foto: foto || "" });
+  } catch (_) {}
+}
+
 function enter() {
   document.body.classList.add("leaving");
   setTimeout(() => location.href = "index.html", 620);
@@ -473,7 +479,7 @@ document.getElementById("loginForm").addEventListener("submit", async (ev) => {
     setLoading(false);
 
     if (error) { showErr(error.message); return; }
-    if (data.session) { enter(); return; }
+    if (data.session) { await logLogin(email); enter(); return; }
     showSuccess("Akun dibuat! Cek email kamu untuk konfirmasi, lalu masuk.");
     setMode("masuk");
     return;
@@ -489,6 +495,7 @@ document.getElementById("loginForm").addEventListener("submit", async (ev) => {
       : "Email atau password salah.");
     return;
   }
+  await logLogin(email);
   enter();
 });
 
@@ -506,11 +513,12 @@ document.getElementById("forgot").addEventListener("click", async (e) => {
 
 /* ---- Google Sign-In via Supabase OAuth ---- */
 document.getElementById("gbtn").addEventListener("click", async () => {
+  localStorage.setItem("cf_oauth_pending", "1");
   const { error } = await _sb.auth.signInWithOAuth({
     provider: "google",
     options: { redirectTo: window.location.origin + "/index.html" },
   });
-  if (error) showErr("Google Sign-In gagal: " + error.message);
+  if (error) { localStorage.removeItem("cf_oauth_pending"); showErr("Google Sign-In gagal: " + error.message); }
 });
 </script>
 </body>
