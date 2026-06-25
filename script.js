@@ -4,12 +4,18 @@
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ---- Logout ----
+const _sbClient = (typeof supabase !== 'undefined')
+  ? supabase.createClient(
+      "https://whmgibfyrbhfleasstho.supabase.co",
+      "sb_publishable_idWV2GBljc8ieek7uslVKQ_J9HWZcO3"
+    )
+  : null;
+
 const logoutBtn = document.getElementById('logout');
 if (logoutBtn) {
-  logoutBtn.addEventListener('click', (e) => {
+  logoutBtn.addEventListener('click', async (e) => {
     e.preventDefault();
-    localStorage.removeItem('cf_authed');
-    sessionStorage.removeItem('cf_authed');
+    if (_sbClient) await _sbClient.auth.signOut();
     location.href = 'login.html';
   });
 }

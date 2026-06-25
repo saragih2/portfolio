@@ -10,9 +10,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<!-- Google Identity Services (untuk tombol Sign in with Google) -->
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
   :root {
@@ -227,6 +224,16 @@
     body { opacity: 1; } .card, .card > * { opacity: 1; transform: none; }
     .brand-side::before, .brand-side::after { transform: none !important; }
   }
+
+  /* tabs */
+  .tabs { display: flex; gap: 0; margin-bottom: 20px; background: rgba(255,255,255,.05); border-radius: 10px; padding: 4px; }
+  .tab { flex: 1; border: 0; cursor: pointer; font-family: var(--font); font-size: .9rem; font-weight: 500; color: var(--text-dim); background: transparent; padding: 9px; border-radius: 8px; transition: all .2s; }
+  .tab.active { background: rgba(34,211,238,.15); color: var(--accent); font-weight: 600; }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  /* success message */
+  .success { color: #28c840; font-size: .82rem; min-height: 18px; margin-top: 12px; text-align: center; font-family: var(--mono); opacity: 0; transition: opacity .2s; }
+  .success.show { opacity: 1; }
 </style>
 </head>
 <body>
@@ -261,15 +268,20 @@
   <!-- RIGHT -->
   <section class="form-side">
     <div class="card" id="card">
-      <h2>Masuk</h2>
-      <p class="sub">Verifikasi dulu dong, lalu kita mulai.</p>
+      <div class="tabs">
+        <button type="button" class="tab active" id="tabMasuk">Masuk</button>
+        <button type="button" class="tab" id="tabDaftar">Daftar</button>
+      </div>
+
+      <h2 id="formTitle">Masuk</h2>
+      <p class="sub" id="formSub">Verifikasi dulu dong, lalu kita mulai.</p>
 
       <form id="loginForm" autocomplete="off" novalidate>
         <div class="field">
-          <label for="user">Username</label>
+          <label for="user">Email</label>
           <div class="input-wrap">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 20 a8 8 0 0 1 16 0"></path></svg>
-            <input type="text" id="user" name="user" placeholder="username" autocomplete="username">
+            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7 12 13 21 7"></path></svg>
+            <input type="email" id="user" name="user" placeholder="email@example.com" autocomplete="email">
           </div>
         </div>
         <div class="field">
@@ -284,6 +296,14 @@
           <div class="caps" id="caps"><svg viewBox="0 0 24 24"><path d="M12 4 5 11 h4 v5 h6 v-5 h4 z"></path><line x1="9" y1="20" x2="15" y2="20"></line></svg>Caps Lock aktif</div>
         </div>
 
+        <div class="field" id="confirmField" style="display:none">
+          <label for="confirm">Konfirmasi Password</label>
+          <div class="input-wrap">
+            <svg viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="9" rx="2"></rect><path d="M8 11 V7 a4 4 0 0 1 8 0 v4"></path></svg>
+            <input type="password" id="confirm" name="confirm" placeholder="••••••••" autocomplete="new-password">
+          </div>
+        </div>
+
         <div class="row">
           <label class="remember"><input type="checkbox" id="remember" checked>Ingat saya</label>
           <a href="#" id="forgot">Lupa password?</a>
@@ -296,49 +316,36 @@
         </button>
 
         <div class="err" id="err"></div>
+        <div class="success" id="success"></div>
       </form>
 
       <div class="divider">atau</div>
 
-      <!-- Tombol Google: fallback custom (mode demo) + slot resmi GIS -->
       <button type="button" class="gbtn" id="gbtn">
         <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.9a5 5 0 0 1-2.2 3.3v2.7h3.5c2-1.9 3.3-4.7 3.3-7.8z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.5-2.7c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2v2.8A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.7 14.1a6.6 6.6 0 0 1 0-4.2V7.1H2a11 11 0 0 0 0 9.8l3.7-2.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3 .6 4.2 1.7l3.1-3.1A11 11 0 0 0 2 7.1l3.7 2.8C6.6 7.4 9.1 5.4 12 5.4z"/></svg>
         Lanjutkan dengan Google
       </button>
-      <div id="gsi-real"></div>
-
-      <div class="hint">Demo: <code>christian</code> / <code>portfolio</code></div>
     </div>
   </section>
 </div>
 
 <script>
-/* =====================================================================
-   KONFIGURASI — ubah sesuai kebutuhanmu
-   ===================================================================== */
-const CONFIG = {
-  // Kredensial username/password (pengecekan sisi-browser; bukan keamanan kuat).
-  username: "christian",
-  password: "portfolio",
-  // Google Sign-In: tempel Client ID-mu setelah situs di-hosting di domain asli.
-  // Dapatkan di https://console.cloud.google.com → Credentials → OAuth Client ID (Web).
-  // Biarkan kosong ("") untuk pakai mode DEMO (tombol tetap bisa diklik untuk masuk).
-  googleClientId: "614264762300-2oi6ji4dvg8o3oj4evd918veifs5fv4e.apps.googleusercontent.com",
-  // Batasi siapa yang boleh masuk lewat Google. Kosongkan ([]) = semua akun Google boleh.
-  // Isi dengan email yang diizinkan, mis: ["christianfebrifrayogasaragih@gmail.com"]
-  allowedEmails: [],
-  redirect: "index.html",
-};
+const _sb = supabase.createClient(
+  "https://whmgibfyrbhfleasstho.supabase.co",
+  "sb_publishable_idWV2GBljc8ieek7uslVKQ_J9HWZcO3"
+);
 
-const KEY = "cf_authed";
-const flash = document.getElementById("flash");
-
-/* ---- Fail-visible failsafe: jika animasi entrance tak berjalan (mis. tab di-background),
-        paksa semua elemen tampil setelah 1.8s sehingga halaman tak pernah blank ---- */
+/* ---- Failsafe animasi ---- */
 setTimeout(() => document.documentElement.classList.add("anim-fallback"), 1800);
 
-/* ---- Terminal typing intro ---- */
-(function term(){
+/* ---- Sudah login? langsung masuk ---- */
+(async function () {
+  const { data } = await _sb.auth.getSession();
+  if (data.session) location.replace("index.html");
+})();
+
+/* ---- Terminal typing ---- */
+(function term() {
   const el = document.getElementById("term");
   if (!el) return;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -347,15 +354,14 @@ setTimeout(() => document.documentElement.classList.add("anim-fallback"), 1800);
     { t: '<span class="ok">✓</span> secure channel established', d: 14 },
     { t: '<span class="pr">$</span> awaiting credentials<span class="caret">.</span>', d: 28 },
   ];
-  if (reduce) { el.innerHTML = lines.map(l=>l.t).join("<br>"); return; }
+  if (reduce) { el.innerHTML = lines.map(l => l.t).join("<br>"); return; }
   let li = 0;
   function typeLine() {
     if (li >= lines.length) return;
     const raw = lines[li].t;
-    // type as plain text but allow the html spans: we type char-by-char on a temp string
     let i = 0; const tmp = document.createElement("div");
     const div = document.createElement("div"); el.appendChild(div);
-    (function step(){
+    (function step() {
       tmp.innerHTML = raw.slice(0, i);
       div.innerHTML = tmp.innerHTML;
       if (i++ <= raw.length) setTimeout(step, lines[li].d);
@@ -365,15 +371,14 @@ setTimeout(() => document.documentElement.classList.add("anim-fallback"), 1800);
   typeLine();
 })();
 
-/* ---- Cursor parallax on brand side ---- */
-(function parallax(){
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (reduce) return;
+/* ---- Cursor parallax ---- */
+(function parallax() {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const side = document.querySelector(".brand-side");
   if (!side) return;
   window.addEventListener("pointermove", (e) => {
-    const x = (e.clientX / window.innerWidth - 0.5);
-    const y = (e.clientY / window.innerHeight - 0.5);
+    const x = e.clientX / window.innerWidth - 0.5;
+    const y = e.clientY / window.innerHeight - 0.5;
     side.style.setProperty("--gx", (x * 18).toFixed(1) + "px");
     side.style.setProperty("--gy", (y * 18).toFixed(1) + "px");
     side.style.setProperty("--gx2", (x * -28).toFixed(1) + "px");
@@ -382,7 +387,7 @@ setTimeout(() => document.documentElement.classList.add("anim-fallback"), 1800);
 })();
 
 /* ---- Caps Lock warning ---- */
-(function caps(){
+(function caps() {
   const pass = document.getElementById("pass");
   const warn = document.getElementById("caps");
   const check = (e) => {
@@ -394,115 +399,118 @@ setTimeout(() => document.documentElement.classList.add("anim-fallback"), 1800);
   pass.addEventListener("blur", () => warn.classList.remove("show"));
 })();
 
-/* ---- Already authed? skip straight in ---- */
-if (localStorage.getItem(KEY) === "1") {
-  location.replace(CONFIG.redirect);
+/* ---- Mode: masuk / daftar ---- */
+let mode = "masuk";
+
+function setMode(m) {
+  mode = m;
+  document.getElementById("tabMasuk").classList.toggle("active", m === "masuk");
+  document.getElementById("tabDaftar").classList.toggle("active", m === "daftar");
+  document.getElementById("formTitle").textContent = m === "masuk" ? "Masuk" : "Daftar";
+  document.getElementById("formSub").textContent = m === "masuk"
+    ? "Verifikasi dulu dong, lalu kita mulai."
+    : "Buat akun untuk mengakses portofolio.";
+  document.querySelector(".bp-label").textContent = m === "masuk" ? "Masuk" : "Buat Akun";
+  document.getElementById("confirmField").style.display = m === "daftar" ? "block" : "none";
+  const row = document.querySelector(".row");
+  if (row) row.style.display = m === "masuk" ? "flex" : "none";
+  document.getElementById("err").classList.remove("show");
+  document.getElementById("success").classList.remove("show");
 }
 
-/* ---- Show / hide password ---- */
+document.getElementById("tabMasuk").addEventListener("click", () => setMode("masuk"));
+document.getElementById("tabDaftar").addEventListener("click", () => setMode("daftar"));
+
+/* ---- Show/hide password ---- */
 document.getElementById("eye").addEventListener("click", () => {
   const p = document.getElementById("pass");
   p.type = p.type === "password" ? "text" : "password";
 });
 
-/* ---- Success flow ---- */
-function enter(remember) {
-  if (remember) localStorage.setItem(KEY, "1");
-  else sessionStorage.setItem(KEY, "1");
-  const btn = document.getElementById("submitBtn");
-  const label = btn.querySelector(".bp-label");
-  btn.classList.add("loading");
-  if (label) label.textContent = "Mengautentikasi...";
-  setTimeout(() => {
-    document.body.classList.add("leaving");
-    setTimeout(() => location.href = CONFIG.redirect, 620);
-  }, 780);
+/* ---- Helpers ---- */
+function enter() {
+  document.body.classList.add("leaving");
+  setTimeout(() => location.href = "index.html", 620);
 }
 
-/* ---- Error helper ---- */
 function showErr(msg) {
   const e = document.getElementById("err");
   const card = document.getElementById("card");
   e.textContent = msg; e.classList.add("show");
+  document.getElementById("success").classList.remove("show");
   card.classList.remove("shake"); void card.offsetWidth; card.classList.add("shake");
 }
 
-/* ---- Form submit (username/password) ---- */
-document.getElementById("loginForm").addEventListener("submit", (ev) => {
+function showSuccess(msg) {
+  const s = document.getElementById("success");
+  s.textContent = msg; s.classList.add("show");
+  document.getElementById("err").classList.remove("show");
+}
+
+function setLoading(on) {
+  const btn = document.getElementById("submitBtn");
+  btn.classList.toggle("loading", on);
+  const label = btn.querySelector(".bp-label");
+  if (label) label.textContent = on
+    ? (mode === "masuk" ? "Mengautentikasi..." : "Membuat akun...")
+    : (mode === "masuk" ? "Masuk" : "Buat Akun");
+}
+
+/* ---- Form submit ---- */
+document.getElementById("loginForm").addEventListener("submit", async (ev) => {
   ev.preventDefault();
-  const u = document.getElementById("user").value.trim();
-  const p = document.getElementById("pass").value;
-  const remember = document.getElementById("remember").checked;
-  if (!u || !p) { showErr("Username & password wajib diisi."); return; }
-  if (u === CONFIG.username && p === CONFIG.password) {
-    enter(remember);
-  } else {
-    showErr("Username atau password salah.");
+  const email = document.getElementById("user").value.trim();
+  const pass  = document.getElementById("pass").value;
+  if (!email || !pass) { showErr("Email & password wajib diisi."); return; }
+
+  if (mode === "daftar") {
+    const confirm = document.getElementById("confirm").value;
+    if (pass !== confirm) { showErr("Password tidak cocok."); return; }
+    if (pass.length < 6)  { showErr("Password minimal 6 karakter."); return; }
+
+    setLoading(true);
+    const { data, error } = await _sb.auth.signUp({ email, password: pass });
+    setLoading(false);
+
+    if (error) { showErr(error.message); return; }
+    if (data.session) { enter(); return; }
+    showSuccess("Akun dibuat! Cek email kamu untuk konfirmasi, lalu masuk.");
+    setMode("masuk");
+    return;
   }
+
+  setLoading(true);
+  const { data, error } = await _sb.auth.signInWithPassword({ email, password: pass });
+  setLoading(false);
+
+  if (error) {
+    showErr(error.message.includes("Email not confirmed")
+      ? "Email belum dikonfirmasi. Cek inbox kamu."
+      : "Email atau password salah.");
+    return;
+  }
+  enter();
 });
 
-document.getElementById("forgot").addEventListener("click", (e) => {
+/* ---- Lupa password ---- */
+document.getElementById("forgot").addEventListener("click", async (e) => {
   e.preventDefault();
-  showErr("Hubungi pemilik portofolio untuk akses.");
+  const email = document.getElementById("user").value.trim();
+  if (!email) { showErr("Masukkan email kamu dulu."); return; }
+  const { error } = await _sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + "/login.html",
+  });
+  if (error) { showErr(error.message); return; }
+  showSuccess("Link reset password dikirim ke email kamu.");
 });
 
-/* ---- Supabase logging ---- */
-const _sb = supabase.createClient(
-  "https://whmgibfyrbhfleasstho.supabase.co",
-  "sb_publishable_idWV2GBljc8ieek7uslVKQ_J9HWZcO3"
-);
-async function logLogin(email, nama, foto) {
-  try {
-    await _sb.from("login_logs").insert({ email, nama, foto });
-  } catch (_) {}
-}
-
-/* ---- Google Sign-In ---- */
-function decodeJwt(token) {
-  try {
-    const p = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
-    return JSON.parse(decodeURIComponent(escape(atob(p))));
-  } catch (_) { return null; }
-}
-
-function handleGoogle(response) {
-  // Mode DEMO (tanpa Client ID): tidak ada credential → langsung masuk.
-  if (!response || !response.credential) {
-    enter(document.getElementById("remember").checked);
-    return;
-  }
-  // Mode ASLI: decode JWT untuk ambil email & nama.
-  const info = decodeJwt(response.credential);
-  const allow = CONFIG.allowedEmails || [];
-  if (allow.length && (!info || !allow.includes(info.email))) {
-    showErr("Akun Google ini tidak diizinkan masuk.");
-    return;
-  }
-  if (info && info.email) {
-    localStorage.setItem("cf_user", info.email);
-    logLogin(info.email, info.name || "", info.picture || "");
-  }
-  enter(document.getElementById("remember").checked);
-}
-
-window.addEventListener("load", () => {
-  const real = document.getElementById("gsi-real");
-  const fallback = document.getElementById("gbtn");
-  if (CONFIG.googleClientId && window.google && google.accounts) {
-    // Mode ASLI: render tombol resmi Google, sembunyikan fallback
-    google.accounts.id.initialize({
-      client_id: CONFIG.googleClientId,
-      callback: handleGoogle,
-    });
-    google.accounts.id.renderButton(real, {
-      theme: "filled_black", size: "large", shape: "pill",
-      text: "continue_with", width: 328,
-    });
-    fallback.style.display = "none";
-  } else {
-    // Mode DEMO: tombol custom langsung memasukkan (alur bisa dilihat)
-    fallback.addEventListener("click", () => handleGoogle());
-  }
+/* ---- Google Sign-In via Supabase OAuth ---- */
+document.getElementById("gbtn").addEventListener("click", async () => {
+  const { error } = await _sb.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: window.location.origin + "/index.html" },
+  });
+  if (error) showErr("Google Sign-In gagal: " + error.message);
 });
 </script>
 </body>
