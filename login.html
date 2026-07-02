@@ -269,7 +269,7 @@
   <section class="form-side">
     <div class="card" id="card">
       <h2 id="formTitle">Masuk</h2>
-      <p class="sub" id="formSub">Akses khusus. Masuk dengan akun terdaftar.</p>
+      <p class="sub" id="formSub">Masuk dulu untuk melihat portofolio.</p>
 
       <form id="loginForm" autocomplete="off" novalidate>
         <div class="field">
@@ -325,10 +325,10 @@ const _sb = supabase.createClient(
 /* ---- Failsafe animasi ---- */
 setTimeout(() => document.documentElement.classList.add("anim-fallback"), 1800);
 
-/* ---- Akun ditolak (akun tak terdaftar coba login Google) ---- */
+/* ---- Login Google gagal (redirect balik dengan error) ---- */
 if (new URLSearchParams(location.search).get("denied") === "1") {
   localStorage.removeItem("cf_oauth_pending");
-  setTimeout(() => showErr("Akun ini tidak terdaftar. Hubungi pemilik untuk minta akses."), 100);
+  setTimeout(() => showErr("Login Google gagal. Coba lagi."), 100);
   history.replaceState(null, "", location.pathname);
 }
 
@@ -450,16 +450,7 @@ document.getElementById("loginForm").addEventListener("submit", async (ev) => {
     return;
   }
 
-  // Allowlist: email harus terdaftar
-  const em = email.toLowerCase();
-  const al = await _sb.from("allowed_emails").select("email").eq("email", em).maybeSingle();
   setLoading(false);
-  if (al.error || !al.data) {
-    await _sb.auth.signOut();
-    showErr("Email ini tidak terdaftar untuk akses.");
-    return;
-  }
-
   await logLogin(email);
   enter();
 });
