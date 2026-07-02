@@ -19,6 +19,8 @@ alter table public.login_logs enable row level security;
 
 -- buang policy lama biar bisa dijalankan ulang tanpa error
 drop policy if exists "login_logs insert own" on public.login_logs;
+-- policy lama dari setup awal yang mengizinkan anon insert (lubang spam) -> buang
+drop policy if exists "allow insert anon" on public.login_logs;
 
 create policy "login_logs insert own"
   on public.login_logs
