@@ -1,0 +1,27 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "main": "script.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "report": "playwright show-report"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saragih2/portfolio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/saragih2/portfolio/issues"
+  },
+  "homepage": "https://github.com/saragih2/portfolio#readme",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "http-server": "^14.1.1"
+  }
+}
