@@ -84,9 +84,6 @@ img { max-width: 100%; display: block; }
 .nav-links a:hover::after { width: 100%; }
 .nav-cta { padding: 9px 18px; border: 1px solid var(--accent); border-radius: 999px; color: var(--accent); font-size: .88rem; font-weight: 600; transition: all .2s; }
 .nav-cta:hover { background: var(--accent); color: #04222a; box-shadow: 0 0 22px var(--glow); }
-.nav-logout { color: var(--text-mute) !important; font-size: .82rem; font-family: var(--mono); }
-.nav-logout:hover { color: #ff6b6b !important; }
-.nav-logout::after { display: none !important; }
 .burger { display: none; background: none; border: 0; color: var(--text); font-size: 1.5rem; cursor: pointer; }
 
 /* ---------------- Hero ---------------- */
